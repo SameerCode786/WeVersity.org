@@ -1,0 +1,509 @@
+import { FontAwesome } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useRef, useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
+import PhoneInput from "react-native-phone-number-input";
+import * as auth from "../../backend/auth/exports";
+import { AppleIcon, FacebookIcon, GoogleIcon } from "../../components/icons";
+
+// Enum for role type
+enum UserRole {
+  Student = "Student",
+  Teacher = "Teacher",
+}
+
+function UserSignUpPage() {
+  const router = useRouter();
+  const phoneInput = useRef<PhoneInput>(null);
+
+  const [role, setRole] = useState<UserRole>(UserRole.Student);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    userName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    passwordConfirmation: "",
+  });
+
+  // Role Selector component
+  const RoleSelector = ({
+    activeRole,
+    onRoleChange,
+  }: {
+    activeRole: UserRole;
+    onRoleChange: (role: UserRole) => void;
+  }) => (
+    <View style={styles.roleContainer}>
+      <TouchableOpacity
+        onPress={() => onRoleChange(UserRole.Teacher)}
+        style={[styles.roleButton, activeRole === UserRole.Teacher && styles.roleButtonActive]}
+      >
+        <Text style={[styles.roleText, activeRole === UserRole.Teacher && styles.roleTextActive]}>
+          Just say Instructor
+        </Text>
+      </TouchableOpacity>
+
+      <View style={styles.roleDivider} />
+
+      <TouchableOpacity
+        onPress={() => onRoleChange(UserRole.Student)}
+        style={[styles.roleButton, activeRole === UserRole.Student && styles.roleButtonActive]}
+      >
+        <Text style={[styles.roleText, activeRole === UserRole.Student && styles.roleTextActive]}>
+          Just say Student
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  // Input Field with validation error
+  const InputField = ({
+    name,
+    placeholder,
+    value,
+    onChange,
+    secureTextEntry,
+    keyboardType,
+    error,
+  }: {
+    name: string;
+    placeholder: string;
+    value: string;
+    onChange: (name: string, value: string) => void;
+    secureTextEntry?: boolean;
+    keyboardType?: "default" | "email-address" | "phone-pad";
+    error?: string;
+  }) => (
+    <View>
+      <TextInput
+        style={[styles.input, error && styles.inputError]}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={(text) => onChange(name, text)}
+        secureTextEntry={secureTextEntry}
+        placeholderTextColor="#9CA3AF"
+        keyboardType={keyboardType}
+        autoCapitalize="none"
+      />
+      {error && (
+        <View style={styles.errorContainer}>
+          <FontAwesome name="exclamation-circle" size={16} color="#EF4444" />
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+    </View>
+  );
+
+  const SocialButton = ({ icon }: { icon: React.ReactNode }) => (
+    <TouchableOpacity style={styles.socialButton}>{icon}</TouchableOpacity>
+  );
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [phoneError, setPhoneError] = useState("");
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "Please fill in this field.";
+    }
+    if (!formData.userName.trim()) {
+      newErrors.userName = "Please fill in this field.";
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "Please fill in this field.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+    if (!formData.phoneNumber.trim()) {
+      setPhoneError("Please fill in this field.");
+    } else {
+      const isValid = phoneInput.current?.isValidNumber(formData.phoneNumber as any);
+      if (!isValid) {
+        setPhoneError("Invalid number for the selected country.");
+      } else {
+        setPhoneError("");
+      }
+    }
+    if (!formData.password) {
+      newErrors.password = "Please fill in this field.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
+    }
+    if (!formData.passwordConfirmation) {
+      newErrors.passwordConfirmation = "Please fill in this field.";
+    } else if (formData.password !== formData.passwordConfirmation) {
+      newErrors.passwordConfirmation = "Passwords do not match.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0 && !phoneError;
+  };
+
+  const handleRegister = async () => {
+    if (!validateForm()) return;
+
+    const newErrors = { ...prev };
+    delete newErrors[name];
+    return newErrors;
+  });
+}
+};
+
+const handlePhoneChange = (text: string) => {
+  setFormData((prev) => ({ ...prev, phoneNumber: text }));
+  setPhoneError("");
+};
+
+return (
+  <ScrollView style={styles.wrapper}>
+    <View style={styles.container}>
+      <RoleSelector activeRole={role} onRoleChange={setRole} />
+
+      <View style={styles.form}>
+        <Text style={styles.label}>First Name <Text style={styles.required}>*</Text></Text>
+        <InputField
+          name="firstName"
+          placeholder="First Name"
+          value={formData.firstName}
+          onChange={handleInputChange}
+          error={errors.firstName}
+        />
+
+        <Text style={styles.label}>Last Name</Text>
+        <InputField
+          name="lastName"
+          placeholder="Last Name"
+          value={formData.lastName}
+          onChange={handleInputChange}
+        />
+
+        <Text style={styles.label}>User Name <Text style={styles.required}>*</Text></Text>
+        <InputField
+          name="userName"
+          placeholder="User Name"
+          value={formData.userName}
+          onChange={handleInputChange}
+          error={errors.userName}
+        />
+
+        <Text style={styles.label}>Email Address <Text style={styles.required}>*</Text></Text>
+        <InputField
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
+          onChange={handleInputChange}
+          keyboardType="email-address"
+          error={errors.email}
+        />
+
+        <Text style={styles.label}>Phone Number <Text style={styles.required}>*</Text></Text>
+        <View style={[styles.phoneContainer, phoneError && styles.phoneContainerError]}>
+          <PhoneInput
+            ref={phoneInput}
+            defaultValue={formData.phoneNumber}
+            defaultCode="US"
+            layout="first"
+            onChangeText={handlePhoneChange}
+            containerStyle={styles.phoneContainer}
+            textContainerStyle={styles.phoneTextContainer}
+            textInputStyle={styles.phoneTextInput}
+            codeTextStyle={styles.phoneCodeText}
+            flagButtonStyle={styles.phoneFlagButton}
+            countryPickerButtonStyle={styles.phoneCountryPicker}
+            textInputProps={{
+              placeholder: "Phone Number",
+              placeholderTextColor: "#9CA3AF",
+            }}
+          />
+        </View>
+        {phoneError ? (
+          <View style={styles.errorContainer}>
+            <FontAwesome name="exclamation-circle" size={16} color="#EF4444" />
+            <Text style={styles.errorText}>{phoneError}</Text>
+          </View>
+        ) : null}
+
+        <Text style={styles.label}>Password <Text style={styles.required}>*</Text></Text>
+        <View style={[styles.passwordContainer, errors.password && styles.inputError]}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Password"
+            value={formData.password}
+            onChangeText={(text) => handleInputChange("password", text)}
+            secureTextEntry={!showPassword}
+            placeholderTextColor="#9CA3AF"
+          />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeButton}
+          >
+            <FontAwesome name={showPassword ? "eye-slash" : "eye"} size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+        {errors.password && (
+          <View style={styles.errorContainer}>
+            <FontAwesome name="exclamation-circle" size={16} color="#EF4444" />
+            <Text style={styles.errorText}>{errors.password}</Text>
+          </View>
+        )}
+
+        <Text style={styles.label}>Re-type Password <Text style={styles.required}>*</Text></Text>
+        <View style={[styles.passwordContainer, errors.passwordConfirmation && styles.inputError]}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Re-type Password"
+            value={formData.passwordConfirmation}
+            onChangeText={(text) => handleInputChange("passwordConfirmation", text)}
+            secureTextEntry={!showPasswordConfirmation}
+            placeholderTextColor="#9CA3AF"
+          />
+          <TouchableOpacity
+            onPress={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
+            style={styles.eyeButton}
+          >
+            <FontAwesome name={showPasswordConfirmation ? "eye-slash" : "eye"} size={20} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
+        {errors.passwordConfirmation && (
+          <View style={styles.errorContainer}>
+            <FontAwesome name="exclamation-circle" size={16} color="#EF4444" />
+            <Text style={styles.errorText}>{errors.passwordConfirmation}</Text>
+          </View>
+        )}
+      </View>
+
+      <TouchableOpacity
+        onPress={handleRegister}
+        style={styles.continueButton}
+        disabled={loading}
+      >
+        <Text style={styles.continueText}>
+          {loading ? "Creating Account..." : "Register"}
+        </Text>
+      </TouchableOpacity>
+
+      <View style={styles.dividerRow}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.dividerText}>or continue with</Text>
+        <View style={styles.dividerLine} />
+      </View>
+
+      <View style={styles.socialRow}>
+        <SocialButton icon={<GoogleIcon />} />
+        <SocialButton icon={<FacebookIcon />} />
+        <SocialButton icon={<AppleIcon />} />
+      </View>
+    </View>
+  </ScrollView>
+);
+}
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  container: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+    paddingTop: 20,
+  },
+
+  // Role Selector Styles
+  roleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    padding: 6,
+    marginTop: 20,
+    marginBottom: 24,
+    width: "100%",
+    backgroundColor: "#fff",
+  },
+  roleButton: {
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+  },
+  roleButtonActive: {
+    backgroundColor: "#7F56D9",
+  },
+  roleText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#111827",
+  },
+  roleTextActive: {
+    color: "#fff",
+  },
+  roleDivider: {
+    width: 1,
+    height: 28,
+    backgroundColor: "#E5E7EB",
+    marginHorizontal: 10,
+  },
+
+  // Form Fields
+  form: {
+    alignSelf: "stretch",
+  },
+  label: {
+    fontSize: 14,
+    color: "#374151",
+    marginBottom: 6,
+    marginTop: 6,
+    fontWeight: "600",
+  },
+  required: {
+    color: "#EF4444",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    fontSize: 16,
+    color: "#111827",
+  },
+  inputError: {
+    borderColor: "#EF4444",
+    borderWidth: 2,
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: -8,
+    marginBottom: 12,
+    gap: 6,
+  },
+  errorText: {
+    color: "#EF4444",
+    fontSize: 13,
+  },
+
+  // Phone Number Styles
+  phoneContainer: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+  },
+  phoneContainerError: {
+    borderColor: "#EF4444",
+    borderWidth: 2,
+  },
+  phoneTextContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingVertical: 0,
+  },
+  phoneTextInput: {
+    fontSize: 16,
+    color: "#111827",
+    paddingVertical: 12,
+  },
+  phoneCodeText: {
+    fontSize: 16,
+    color: "#111827",
+    fontWeight: "500",
+  },
+  phoneFlagButton: {
+    paddingHorizontal: 8,
+  },
+  phoneCountryPicker: {
+    paddingHorizontal: 8,
+  },
+
+  // Password Styles
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+  },
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: "#111827",
+  },
+  eyeButton: {
+    padding: 8,
+  },
+
+  continueButton: {
+    backgroundColor: "#7F56D9",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 20,
+    alignSelf: "stretch",
+  },
+  continueText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 18,
+  },
+  dividerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 24,
+    alignSelf: "stretch",
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#E5E7EB",
+  },
+  dividerText: {
+    marginHorizontal: 12,
+    color: "#6B7280",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  socialRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignSelf: "stretch",
+    marginBottom: 32,
+  },
+  socialButton: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginHorizontal: 6,
+    backgroundColor: "#fff",
+  },
+});
+
+export default UserSignUpPage;
