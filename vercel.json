@@ -1,4 +1,15 @@
 {
+  "build": {
+    "env": {
+      "EXPO_PUBLIC_SKIP_WEB_EXTENSIONS": "true"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/your-api-route",
+      "schedule": "0 0 * * *"
+    }
+  ],
   "buildCommand": "npm run build",
   "outputDirectory": "dist"
 }
