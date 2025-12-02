@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { UserInfoCard } from "../../../components/profile/UserInfoCard";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -33,28 +33,28 @@ export default function StudentDashboard({ profile }: { profile: any }) {
             title: "Watch Live Classes",
             icon: "videocam",
             color: "#EF4444",
-            route: "/(tabs)/main/Live",
+            route: "/(tabs)/home/Live",
         },
         {
             id: "shorts",
             title: "Watch Shorts",
             icon: "play-circle",
             color: "#F59E0B",
-            route: "/(tabs)/main/Shorts",
+            route: "/(tabs)/home/Shorts",
         },
         {
             id: "courses",
             title: "Browse Courses",
             icon: "library",
             color: "#3B82F6",
-            route: "/(tabs)/main/Courses",
+            route: "/(tabs)/home/Courses",
         },
         {
             id: "enrolled",
             title: "My Enrollments",
             icon: "school",
             color: "#10B981",
-            route: "/(tabs)/main/Courses", // Filter for enrolled in real app
+            route: "/(tabs)/home/Courses", // Filter for enrolled in real app
         },
     ];
 
@@ -107,7 +107,7 @@ export default function StudentDashboard({ profile }: { profile: any }) {
                     <Text style={styles.sectionTitle}>Recently Visited Teachers</Text>
                     <View style={styles.emptyState}>
                         <Text style={styles.emptyText}>No recent teachers found.</Text>
-                        <TouchableOpacity onPress={() => router.push("/(tabs)/main/Live")}>
+                        <TouchableOpacity onPress={() => router.push("/(tabs)/home/Live")}>
                             <Text style={styles.linkText}>Find Teachers</Text>
                         </TouchableOpacity>
                     </View>
@@ -117,7 +117,7 @@ export default function StudentDashboard({ profile }: { profile: any }) {
                     <Text style={styles.sectionTitle}>My Courses</Text>
                     <View style={styles.emptyState}>
                         <Text style={styles.emptyText}>You haven&apos;t enrolled in any courses yet.</Text>
-                        <TouchableOpacity onPress={() => router.push("/(tabs)/main/Courses")}>
+                        <TouchableOpacity onPress={() => router.push("/(tabs)/home/Courses")}>
                             <Text style={styles.linkText}>Browse Courses</Text>
                         </TouchableOpacity>
                     </View>

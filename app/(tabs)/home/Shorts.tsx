@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { TopNavBar } from "../../../components/ui/TopNavBar";
+// TopNavBar removed: using MaterialTopTabs in main/_layout.tsx as the single top navigation
 
 const { width, height } = Dimensions.get("window");
 const SHORT_HEIGHT = height - 140;
@@ -93,8 +93,8 @@ export default function ShortsPage() {
   const [commentText, setCommentText] = useState("");
 
   const handleLike = (id: string) => {
-    setShorts((prevShorts) =>
-      prevShorts.map((short) => {
+    setShorts((prevShorts: ShortItem[]) =>
+      prevShorts.map((short: ShortItem) => {
         if (short.id === id) {
           if (short.hasLiked) {
             return { ...short, likes: short.likes - 1, hasLiked: false };
@@ -260,7 +260,7 @@ export default function ShortsPage() {
 
   return (
     <View style={styles.container}>
-      <TopNavBar activeTab="Short" />
+
       <FlatList
         data={shorts}
         renderItem={renderShort}
@@ -274,6 +274,7 @@ export default function ShortsPage() {
           offset: SHORT_HEIGHT * index,
           index,
         })}
+        contentContainerStyle={{ paddingBottom: 120 }}
       />
 
       <Modal

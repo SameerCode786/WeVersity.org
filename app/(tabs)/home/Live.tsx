@@ -1,14 +1,12 @@
-import React from "react";
 import {
-    Dimensions,
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { TopNavBar } from "../../../components/ui/TopNavBar";
 
 const { width } = Dimensions.get("window");
 
@@ -71,7 +69,6 @@ export default function LivePage() {
 
   return (
     <View style={styles.container}>
-      <TopNavBar activeTab="Live" />
       <FlatList
         data={teachers}
         renderItem={renderTeacherCard}

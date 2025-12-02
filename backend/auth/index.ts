@@ -120,37 +120,23 @@ export const login = async (email: string, password: string) => {
   });
 
   if (error) {
-    // Check if it's an email not confirmed error
-    const errorMsg = error.message.toLowerCase();
-    if (errorMsg.includes('email not confirmed') || errorMsg.includes('not verified')) {
-      throw new Error('Email not verified. Please check your inbox.');
-    }
     // Generic credential error
-    if (errorMsg.includes('invalid') || errorMsg.includes('credentials')) {
+    if (error.message.toLowerCase().includes('invalid') || error.message.toLowerCase().includes('credentials')) {
       throw new Error('Wrong credentials');
     }
     throw new Error(error.message);
   }
 
-  // If we have a user but no session, check email confirmation
-  if (data.user && !data.session) {
-    // Check if email is confirmed
-    if (!data.user.email_confirmed_at) {
-      throw new Error('Email not verified. Please check your inbox.');
-    }
-    throw new Error('Login failed. Please try again.');
+  // Allow login regardless of email verification status
+  // Return the session data if we have a user
+  if (data.user) {
+    return data;
   }
 
-  if (!data.session) {
-    throw new Error('Login failed. Please try again.');
-  }
-
-  return data;
+  throw new Error('Login failed. Please try again.');
 };
 
 export const getRoleBasedRoute = (role: string | undefined): string => {
-  if (role === 'teacher') {
-    return '/(tabs)/home';
-  }
-  return '/(tabs)/home';
+  // Both roles should go to the Live screen
+  return '/(tabs)/main/Live';
 };

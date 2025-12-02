@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import * as React from "react";
 import { Course } from "../data/courses";
 
 type BookmarkContextType = {
@@ -8,13 +8,13 @@ type BookmarkContextType = {
   getBookmarkedCourses: (allCourses: Course[]) => Course[];
 };
 
-const BookmarkContext = createContext<BookmarkContextType | undefined>(undefined);
+const BookmarkContext = React.createContext(undefined as any);
 
-export function BookmarkProvider({ children }: { children: ReactNode }) {
-  const [bookmarkedCourses, setBookmarkedCourses] = useState<number[]>([]);
+export function BookmarkProvider({ children }: { children: React.ReactNode }) {
+  const [bookmarkedCourses, setBookmarkedCourses] = React.useState([] as any);
 
   const toggleBookmark = (courseId: number) => {
-    setBookmarkedCourses((prev) => {
+    setBookmarkedCourses((prev: number[]) => {
       if (prev.includes(courseId)) {
         return prev.filter((id) => id !== courseId);
       } else {
@@ -46,7 +46,7 @@ export function BookmarkProvider({ children }: { children: ReactNode }) {
 }
 
 export function useBookmark() {
-  const context = useContext(BookmarkContext);
+  const context = React.useContext(BookmarkContext);
   if (context === undefined) {
     throw new Error("useBookmark must be used within a BookmarkProvider");
   }

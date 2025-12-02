@@ -1,5 +1,4 @@
 import { useRouter } from "expo-router";
-import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -9,7 +8,7 @@ interface TopNavBarProps {
     activeTab: TopTab;
 }
 
-export const TopNavBar: React.FC<TopNavBarProps> = ({ activeTab }) => {
+export const TopNavBar = ({ activeTab }: TopNavBarProps) => {
     const router = useRouter();
     const insets = useSafeAreaInsets();
 

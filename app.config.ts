@@ -30,18 +30,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     'expo-router',
-    [
-      'expo-splash-screen',
-      {
-        image: './assets/images/splash-icon-dark.png',
-        imageWidth: 900,
-        resizeMode: 'contain',
-        backgroundColor: '#ffffff',
-        dark: {
-          backgroundColor: '#000000',
-        },
-      },
-    ],
   ],
   experiments: {
     typedRoutes: true,
@@ -61,4 +49,3 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     url: 'https://u.expo.dev/f1419e6a-d48f-449d-bbef-3f18e4b1be89',
   },
 });
-

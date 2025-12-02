@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { HeaderWithBackButton } from "../../components/ui/HeaderWithBackButton";
 
@@ -16,25 +16,25 @@ export default function ForgotPasswordSecond() {
 
   // OTP state
   const [digits, setDigits] = useState(["", "", "", ""]);
-  const ref0 = useRef<TextInput | null>(null);
-  const ref1 = useRef<TextInput | null>(null);
-  const ref2 = useRef<TextInput | null>(null);
-  const ref3 = useRef<TextInput | null>(null);
+  const ref0 = useRef<any>(null);
+  const ref1 = useRef<any>(null);
+  const ref2 = useRef<any>(null);
+  const ref3 = useRef<any>(null);
 
   // Timer for resend
   const [timer, setTimer] = useState(53);
 
   useEffect(() => {
     if (timer <= 0) return;
-    const id = setInterval(() => setTimer((t) => t - 1), 1000);
+    const id: any = setInterval(() => setTimer((t: number) => t - 1), 1000);
     return () => clearInterval(id);
   }, [timer]);
 
   const onChange = (text: string, idx: number) => {
     const char = text.slice(-1);
-    
+
     // Update the digit at the current index
-    setDigits(prev => {
+    setDigits((prev: string[]) => {
       const next = [...prev];
       next[idx] = char;
       return next;
@@ -82,8 +82,8 @@ export default function ForgotPasswordSecond() {
               key={idx}
               ref={ref}
               value={digits[idx]}
-              onChangeText={(t) => onChange(t, idx)}
-              onKeyPress={({ nativeEvent }) => {
+              onChangeText={(t: string) => onChange(t, idx)}
+              onKeyPress={({ nativeEvent }: { nativeEvent: any }) => {
                 // Handle backspace key press
                 if (nativeEvent.key === 'Backspace' && !digits[idx] && idx > 0) {
                   setTimeout(() => {

@@ -12,7 +12,12 @@ import {
 import { getLiveById, swipeNextLive } from '../../backend/live';
 import { subscribeToLiveComments } from '../../backend/supabase/supabaseHelpers';
 
-type LiveSession = Awaited<ReturnType<typeof getLiveById>>;
+type LiveSession = {
+  id: string;
+  title?: string;
+  stream_url?: string;
+  teacher?: { full_name?: string } | null;
+};
 
 export default function LivePlayerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,7 +32,7 @@ export default function LivePlayerScreen() {
       setLoading(true);
       try {
         const liveSession = await getLiveById(id);
-        setSession(liveSession);
+        setSession(liveSession as LiveSession);
       } catch (err) {
         console.error(err);
       } finally {
@@ -42,10 +47,10 @@ export default function LivePlayerScreen() {
     const channel = subscribeToLiveComments(session.id, (comment) => {
       setComments((prev) => [comment, ...prev]);
     });
-    channel.subscribe();
+    if (channel?.subscribe) channel.subscribe();
 
     return () => {
-      channel.unsubscribe();
+      if (channel?.unsubscribe) channel.unsubscribe();
     };
   }, [session]);
 

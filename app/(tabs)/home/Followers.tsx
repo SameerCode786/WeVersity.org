@@ -1,19 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    Image,
-    RefreshControl,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Image,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { getFollowedTeachers, unfollowTeacher } from "../../../backend/followers";
-import { TopNavBar } from "../../../components/ui/TopNavBar";
+// TopNavBar removed: using MaterialTopTabs in main/_layout.tsx as the single top navigation
 import { useAuth } from "../../../contexts/AuthContext";
 
 interface FollowedTeacher {
@@ -68,7 +68,7 @@ export default function FollowersPage() {
           onPress: async () => {
             try {
               await unfollowTeacher(user.id, teacherId);
-              setTeachers((prev) => prev.filter((t) => t.teacher.id !== teacherId));
+              setTeachers((prev: FollowedTeacher[]) => prev.filter((t: FollowedTeacher) => t.teacher.id !== teacherId));
               Alert.alert("Success", "Unfollowed teacher");
             } catch (error: any) {
               Alert.alert("Error", error.message);
@@ -105,7 +105,6 @@ export default function FollowersPage() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <TopNavBar activeTab="Followers" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#8B5CF6" />
         </View>
@@ -115,7 +114,6 @@ export default function FollowersPage() {
 
   return (
     <View style={styles.container}>
-      <TopNavBar activeTab="Followers" />
       <FlatList
         data={teachers}
         renderItem={renderTeacher}
@@ -128,7 +126,7 @@ export default function FollowersPage() {
             <Text style={styles.emptyText}>You&apos;re not following any teachers yet.</Text>
             <TouchableOpacity
               style={styles.browseButton}
-              onPress={() => router.push("/(tabs)/main/Live")}
+              onPress={() => router.push("/(tabs)/home/Live")}
             >
               <Text style={styles.browseButtonText}>Browse Teachers</Text>
             </TouchableOpacity>

@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { resendVerificationEmail } from "../../backend/auth";
 import { HeaderWithBackButton } from "../../components/ui/HeaderWithBackButton";
@@ -12,7 +12,7 @@ export default function VerificationScreen() {
 
     useEffect(() => {
         if (countdown > 0) {
-            const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+            const timer: any = setTimeout(() => setCountdown((c: number) => c - 1), 1000);
             return () => clearTimeout(timer);
         }
     }, [countdown]);

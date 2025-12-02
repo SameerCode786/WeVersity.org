@@ -1,20 +1,18 @@
-import { Stack } from "expo-router";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AuthProvider } from "../contexts/AuthContext";
-import { BookmarkProvider } from "../contexts/BookmarkContext";
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+
+export const unstable_settings = {
+  // Keep routing anchor behavior if you use (tabs)
+  anchor: '(tabs)',
+};
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <BookmarkProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="auth" />
-          </Stack>
-        </BookmarkProvider>
-      </AuthProvider>
-    </SafeAreaProvider>
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+      <StatusBar hidden />
+    </>
   );
 }

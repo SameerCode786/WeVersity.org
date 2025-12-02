@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { UserInfoCard } from "../../../components/profile/UserInfoCard";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -33,28 +33,28 @@ export default function TeacherDashboard({ profile }: { profile: any }) {
             title: "Go Live",
             icon: "radio",
             color: "#EF4444",
-            route: "/(tabs)/main/Live", // In real app, this would be a "Start Live" screen
+            route: "/(tabs)/home/Live", // In real app, this would be a "Start Live" screen
         },
         {
             id: "create-course",
             title: "Create Course",
             icon: "add-circle",
             color: "#3B82F6",
-            route: "/(tabs)/main/Courses", // In real app, "Create Course" screen
+            route: "/(tabs)/home/Courses", // In real app, "Create Course" screen
         },
         {
             id: "upload-short",
             title: "Upload Short",
             icon: "film",
             color: "#F59E0B",
-            route: "/(tabs)/main/Shorts", // In real app, "Upload Short" screen
+            route: "/(tabs)/home/Shorts", // In real app, "Upload Short" screen
         },
         {
             id: "manage",
             title: "Manage Classes",
             icon: "settings",
             color: "#6B7280",
-            route: "/(tabs)/main/Courses",
+            route: "/(tabs)/home/Courses",
         },
     ];
 

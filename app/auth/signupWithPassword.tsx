@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { supabaseClient } from "../../backend/supabase/client";
 import { AppleIcon, EmailIcon, FacebookIcon, GoogleIcon, PasswordIcon } from "../../components/icons";
@@ -22,7 +22,7 @@ export default function SignupWithPasswordScreen() {
   useEffect(() => {
     // Load email from storage if not in params
     if (!paramEmail) {
-      AsyncStorage.getItem("pendingVerificationEmail").then((storedEmail) => {
+      AsyncStorage.getItem("pendingVerificationEmail").then((storedEmail: string | null) => {
         if (storedEmail) setEmail(storedEmail);
       });
     }
@@ -77,16 +77,7 @@ export default function SignupWithPasswordScreen() {
       await refreshUser();
       await AsyncStorage.removeItem("pendingVerificationEmail");
 
-      // Route based on role (ensure role exists)
-      const role = profile?.role;
-      if (!role) {
-        // If role missing, default to main
-        console.warn('User role missing, defaulting to main');
-        router.replace('/(tabs)/main/Live');
-        return;
-      }
-
-      // Both roles now go to the Live page (due to initialRouteName setting)
+      // Always navigate to the Live screen after successful login
       router.replace('/(tabs)/main/Live');
     } catch (error: any) {
       const message = error?.message || 'An error occurred during login';
@@ -134,7 +125,7 @@ export default function SignupWithPasswordScreen() {
               placeholderTextColor="#9CA3AF"
               autoCapitalize="none"
             />
-            <TouchableOpacity onPress={() => setShowPassword((s) => !s)} style={styles.eyeButtonRight}>
+            <TouchableOpacity onPress={() => setShowPassword((s: boolean) => !s)} style={styles.eyeButtonRight}>
               <Ionicons name={showPassword ? "eye" : "eye-off"} size={18} color="#6B7280" />
             </TouchableOpacity>
           </View>
@@ -144,7 +135,7 @@ export default function SignupWithPasswordScreen() {
               <Text style={styles.forgotText}>Forgot password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.rememberRow} onPress={() => setRemember((r) => !r)}>
+            <TouchableOpacity style={styles.rememberRow} onPress={() => setRemember((r: boolean) => !r)}>
               <View style={[styles.checkbox, remember && styles.checkboxChecked]} />
               <Text style={styles.rememberText}>Remember me</Text>
             </TouchableOpacity>
@@ -161,9 +152,21 @@ export default function SignupWithPasswordScreen() {
           </View>
 
           <View style={styles.socialRow}>
-            <TouchableOpacity style={styles.socialCircle}><FacebookIcon /></TouchableOpacity>
-            <TouchableOpacity style={styles.socialCircle}><GoogleIcon /></TouchableOpacity>
-            <TouchableOpacity style={styles.socialCircle}><AppleIcon /></TouchableOpacity>
+            <TouchableOpacity style={styles.socialCircle}>
+              <View style={styles.socialIconWrapper}>
+                <FacebookIcon size={24} />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.socialCircle}>
+              <View style={styles.socialIconWrapper}>
+                <GoogleIcon size={24} />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.socialCircle}>
+              <View style={styles.socialIconWrapper}>
+                <AppleIcon size={24} />
+              </View>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.footerRow}>
@@ -299,10 +302,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E5E7EB",
     borderRadius: 12,
-    paddingVertical: 14,
+    paddingVertical: 16,
     alignItems: "center",
     marginHorizontal: 6,
     backgroundColor: "#fff",
+  },
+  socialIconWrapper: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
   },
   footerRow: {
     flexDirection: "row",

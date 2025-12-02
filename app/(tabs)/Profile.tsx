@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { getUserProfile } from "../../backend/supabase/supabaseHelpers";
 import { useAuth } from "../../contexts/AuthContext";
-import StudentDashboard from "./profile/studentDashboard";
-import TeacherDashboard from "./profile/teacherDashboard";
+import StudentDashboard from "./profilePages/studentDashboard";
+import TeacherDashboard from "./profilePages/teacherDashboard";
 
 export default function ProfileTab() {
   const { user } = useAuth();
@@ -78,4 +78,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-

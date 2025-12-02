@@ -68,7 +68,7 @@ const InputField = React.memo(function InputField({
   placeholder: string;
   value: string;
   onChange: (name: string, value: string) => void;
-  inputRef?: React.RefObject<TextInput | null>;
+  inputRef?: React.RefObject<any>;
   onSubmitEditing?: () => void;
   secureTextEntry?: boolean;
   keyboardType?: "default" | "email-address" | "phone-pad";
@@ -81,7 +81,7 @@ const InputField = React.memo(function InputField({
         style={[styles.input, error && styles.inputError]}
         placeholder={placeholder}
         value={value}
-        onChangeText={(text) => onChange(name, text)}
+        onChangeText={(text: string) => onChange(name, text)}
         secureTextEntry={secureTextEntry}
         placeholderTextColor="#9CA3AF"
         keyboardType={keyboardType}
@@ -109,7 +109,7 @@ const SocialButton = React.memo(function SocialButton({ icon }: { icon: React.Re
 function UserSignUpPage() {
   const router = useRouter();
   const { refreshUser } = useAuth();
-  const phoneInput = useRef<PhoneInput>(null);
+  const phoneInput = useRef<any>(null);
 
   const [role, setRole] = useState<UserRole>(UserRole.Student);
   const [loading, setLoading] = useState(false);
@@ -130,12 +130,12 @@ function UserSignUpPage() {
   const [phoneError, setPhoneError] = useState("");
 
   // refs for focusing next input
-  const firstNameRef = useRef<TextInput | null>(null);
-  const lastNameRef = useRef<TextInput | null>(null);
-  const userNameRef = useRef<TextInput | null>(null);
-  const emailRef = useRef<TextInput | null>(null);
-  const passwordRef = useRef<TextInput | null>(null);
-  const passwordConfirmRef = useRef<TextInput | null>(null);
+  const firstNameRef = useRef<any>(null);
+  const lastNameRef = useRef<any>(null);
+  const userNameRef = useRef<any>(null);
+  const emailRef = useRef<any>(null);
+  const passwordRef = useRef<any>(null);
+  const passwordConfirmRef = useRef<any>(null);
 
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {};
@@ -153,7 +153,7 @@ function UserSignUpPage() {
 
   const handleRegister = useCallback(async () => {
     if (!validateForm()) return;
-    const formattedPhoneNumber = phoneInput.current?.getNumberAfterPossiblyEliminatingZero()?.formattedNumber;
+    const formattedPhoneNumber = (phoneInput.current as any)?.getNumberAfterPossiblyEliminatingZero?.()?.formattedNumber;
     if (!formattedPhoneNumber) {
       setPhoneError("Invalid phone number format.");
       return;
@@ -171,8 +171,13 @@ function UserSignUpPage() {
       if (role === UserRole.Teacher) payload.expertise = formData.teacherRole;
       if (role === UserRole.Student) await auth.signupStudent(payload as any);
       else await auth.signupTeacher(payload as any);
-      Alert.alert("Please Verify Your Email", "We have sent a confirmation link to your email. Please verify your email to continue.");
-      router.replace({ pathname: "/auth/verified", params: { email: formData.email } });
+      
+      // Refresh the user context to update authentication state
+      await refreshUser();
+      
+      // After successful signup, go straight to the app Home (Live) screen.
+      Alert.alert("Account created", "Your account has been created. Redirecting to Home.");
+      router.replace("/(tabs)/main/Live");
       return;
     } catch (error: any) {
       const msg = (error?.message || "").toLowerCase();
@@ -184,11 +189,11 @@ function UserSignUpPage() {
     } finally {
       setLoading(false);
     }
-  }, [validateForm, formData, role, router]);
+  }, [validateForm, formData, role, router, refreshUser]);
 
   const handleInputChange = useCallback((name: string, value: string) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
-    setErrors((prev) => {
+    setErrors((prev: Record<string, string>) => {
       const newErrors = { ...prev } as Record<string, string>;
       delete newErrors[name];
       return newErrors;
@@ -245,7 +250,7 @@ function UserSignUpPage() {
 
             <Text style={styles.label}>Password <Text style={styles.required}>*</Text></Text>
             <View style={[styles.passwordContainer, errors.password && styles.inputError]}>
-              <TextInput ref={passwordRef} style={styles.passwordInput} placeholder="Password" value={formData.password} onChangeText={(text) => handleInputChange("password", text)} secureTextEntry={!showPassword} placeholderTextColor="#9CA3AF" blurOnSubmit={false} returnKeyType="next" onSubmitEditing={() => passwordConfirmRef.current?.focus()} />
+              <TextInput ref={passwordRef} style={styles.passwordInput} placeholder="Password" value={formData.password} onChangeText={(text: string) => handleInputChange("password", text)} secureTextEntry={!showPassword} placeholderTextColor="#9CA3AF" blurOnSubmit={false} returnKeyType="next" onSubmitEditing={() => passwordConfirmRef.current?.focus()} />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}><FontAwesome name={showPassword ? "eye-slash" : "eye"} size={20} color="#9CA3AF" /></TouchableOpacity>
             </View>
             {errors.password && (
@@ -254,7 +259,7 @@ function UserSignUpPage() {
 
             <Text style={styles.label}>Re-type Password <Text style={styles.required}>*</Text></Text>
             <View style={[styles.passwordContainer, errors.passwordConfirmation && styles.inputError]}>
-              <TextInput ref={passwordConfirmRef} style={styles.passwordInput} placeholder="Re-type Password" value={formData.passwordConfirmation} onChangeText={(text) => handleInputChange("passwordConfirmation", text)} secureTextEntry={!showPasswordConfirmation} placeholderTextColor="#9CA3AF" blurOnSubmit={false} returnKeyType="done" onSubmitEditing={handleRegister} />
+              <TextInput ref={passwordConfirmRef} style={styles.passwordInput} placeholder="Re-type Password" value={formData.passwordConfirmation} onChangeText={(text: string) => handleInputChange("passwordConfirmation", text)} secureTextEntry={!showPasswordConfirmation} placeholderTextColor="#9CA3AF" blurOnSubmit={false} returnKeyType="done" onSubmitEditing={handleRegister} />
               <TouchableOpacity onPress={() => setShowPasswordConfirmation(!showPasswordConfirmation)} style={styles.eyeButton}><FontAwesome name={showPasswordConfirmation ? "eye-slash" : "eye"} size={20} color="#9CA3AF" /></TouchableOpacity>
             </View>
             {errors.passwordConfirmation && (

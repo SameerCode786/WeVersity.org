@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
+import * as React from "react";
 import { supabaseClient } from "../backend/supabase/client";
 
 interface AuthContextType {
@@ -11,14 +11,14 @@ interface AuthContextType {
   refreshUser: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = React.createContext(undefined as any);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [user, setUser] = React.useState(null as any);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Check active session on app start
     const checkSession = async () => {
       try {
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Listen for auth state changes
     let subscription: { unsubscribe: () => void } | undefined;
-    
+
     if (typeof supabaseClient.auth.onAuthStateChange === 'function') {
       const result = supabaseClient.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
         if (session?.user) {
@@ -51,13 +51,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAuthenticated(false);
         }
       });
-      
+
       // Handle both possible return types
       if (result && typeof result === 'object') {
         if ('data' in result && result.data?.subscription) {
-          subscription = result.data.subscription;
+          subscription = result.data.subscription as { unsubscribe: () => void } | undefined;
         } else if ('subscription' in result) {
-          subscription = result.subscription;
+          subscription = result.subscription as { unsubscribe: () => void } | undefined;
         }
       }
     }
@@ -74,9 +74,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Check if supabaseClient has the signInWithPassword method
       if (typeof supabaseClient.auth.signInWithPassword !== 'function') {
         console.warn('Supabase client is in mock mode. Login functionality is not available.');
-        return { 
-          success: false, 
-          error: "Authentication is not configured. Please set up Supabase environment variables." 
+        return {
+          success: false,
+          error: "Authentication is not configured. Please set up Supabase environment variables."
         };
       }
 
@@ -133,10 +133,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ 
-      isAuthenticated, 
-      user, 
-      login, 
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      user,
+      login,
       logout,
       refreshUser
     }}>
@@ -146,7 +146,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
+  const context = React.useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within AuthProvider");
   }

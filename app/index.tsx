@@ -36,13 +36,15 @@ export default function Index() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/(tabs)/main/Live");
+      router.replace("/(tabs)/home/Live");
     }
   }, [isAuthenticated, router]);
 
   const handleNext = () => {
     router.replace("/auth/userFirstSignupPage");
   };
+
+  if (isAuthenticated) return null;
 
   return (
     <View style={styles.container}>

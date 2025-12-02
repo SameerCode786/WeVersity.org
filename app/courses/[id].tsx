@@ -1,16 +1,16 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { getCourseById, getCourseContent } from '../../backend/courses';
 
-type Course = Awaited<ReturnType<typeof getCourseById>>;
-type CourseContent = Awaited<ReturnType<typeof getCourseContent>>;
+type Course = any;
+type CourseContent = any[];
 
 export default function CourseDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -29,7 +29,7 @@ export default function CourseDetailsScreen() {
           getCourseContent(id),
         ]);
         setCourse(courseData);
-        setContent(contentData);
+        setContent(contentData as any);
       } catch (err) {
         setError((err as Error).message);
       } finally {

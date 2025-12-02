@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BackButton, BackButtonProps } from '../buttons/BackButton';
@@ -7,11 +6,11 @@ interface HeaderWithBackButtonProps extends BackButtonProps {
   title: string;
 }
 
-export const HeaderWithBackButton: React.FC<HeaderWithBackButtonProps> = ({
+export const HeaderWithBackButton = ({
   title,
   inline,
   onPress
-}) => {
+}: HeaderWithBackButtonProps) => {
   const insets = useSafeAreaInsets();
 
   return (
