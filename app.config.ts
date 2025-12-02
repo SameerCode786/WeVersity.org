@@ -1,5 +1,10 @@
-import 'dotenv/config';
-import { ConfigContext, ExpoConfig } from 'expo/config';
+// Load .env only if available (prevents errors when node_modules is missing)
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require('dotenv/config');
+} catch (e) {
+  // ignore - dotenv may not be installed yet during first `npx expo install`
+}
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,

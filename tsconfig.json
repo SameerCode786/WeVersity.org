@@ -6,7 +6,7 @@
       "ES2020",
       "DOM"
     ],
-    "jsx": "react-jsx",
+    "jsx": "react-native",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -27,10 +27,6 @@
       "./src/types",
       "./types",
       "./node_modules/@types"
-    ],
-    "types": [
-      "react",
-      "react-native"
     ]
   },
   "include": [
@@ -50,5 +46,5 @@
     "backend/node_modules",
     "test-app"
   ],
-  "extends": "expo/tsconfig.base"
+  "extends": "./node_modules/expo/tsconfig.base.json"
 }
