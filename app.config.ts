@@ -6,6 +6,8 @@ try {
   // ignore - dotenv may not be installed yet during first `npx expo install`
 }
 
+import { ConfigContext, ExpoConfig } from '@expo/config';
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'WeVersity.org',
